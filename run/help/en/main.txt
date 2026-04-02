@@ -1,0 +1,19 @@
+
+MOONSHELL HELP REFERENCE
+------------------------------
+
+Built in Commands with syntax:
+    help [~com]             - show help reference
+    exit                    - exit
+    ls                      - show list of folder`s items
+    copy [scr] [cp_to]      - copy files
+    touch [scr] [text]      - make file and write text into it
+    cd [path]               - change current folder
+    pwd                     - show current folder
+    mkdir [path]            - make new folder
+    rm [path]               - delete file or folder
+    mv [scr] [mv-to]        - rename file or folder
+    clear                   - claer output
+    
+More detial help reference about commands you can find  here:
+    help [commmand]
