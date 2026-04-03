@@ -14,6 +14,9 @@ Built in Commands with syntax:
     rm [path]               - delete file or folder
     mv [scr] [mv-to]        - rename file or folder
     clear                   - claer output
+    print [text] [path_p]   - print text on printer
+    sudo [com]              - run command as superuser
+    echo [text]             - print text on screeen
     
 More detial help reference about commands you can find  here:
     help [commmand]

@@ -29,6 +29,6 @@ def windows_clear():
     return 0
 
 if list(platform.platform())[1] == 'Windows':
-    windows_clear
+    windows_clear()
 else:
     print('\033c')
