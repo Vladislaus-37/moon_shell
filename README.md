@@ -1,2 +1,4 @@
-# moon_shell
-CLI shell for Linux and sWindows
+# MoonShell
+CLI shell for Linux and sWindows by Vladislaus
+
+![image](./misc/MoonShell.png)
