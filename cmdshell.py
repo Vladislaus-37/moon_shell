@@ -5,6 +5,14 @@ import sys
 maindir = os.getcwd()
 last = maindir
 agrm = sys.argv[1:]
+alias_name = []
+alias_commands = []
+
+def add_alias(name, command):
+    global alias_name, alias_commands
+    alias_name += [name] 
+    alias_commands += [command]
+    return 0
 
 def cmdanal(comm):
     global last
@@ -12,10 +20,19 @@ def cmdanal(comm):
     cudir = os.getcwd()
     os.chdir(maindir + '/run/')
 
-    # Built is`s
-    if comm[0] == 'ls':
-        subprocess.run(['python'] + [comm[0] + '.py'] + [cudir], shell=False)
+    # Check Aliases
+    if comm[0] in alias_name:
+        coms = (alias_commands[alias_name.index(comm[0])]+' '.join(comm[1:])).split(' & ')
+        for i in coms:
+            cmdanal(i)
+
+     # Built is`s
+    elif comm[0] == 'ls':
+        subprocess.run(['python'] + [comm[0] + '.py'] + [cudir],shell=False)
         os.chdir(cudir)
+
+    elif comm[0] == 'alias':
+        add_alias(comm[1], ' '.join(comm[2:]))
 
     elif comm[0] == 'cd':
         if comm[1] == '-':

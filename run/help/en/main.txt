@@ -17,6 +17,7 @@ Built in Commands with syntax:
     print [text] [path_p]   - print text on printer
     sudo [com]              - run command as superuser
     echo [text]             - print text on screeen
+    alias [name] [com(s)]   - create alias for command(s)
     
 More detial help reference about commands you can find  here:
     help [commmand]
