@@ -4,9 +4,9 @@ import locale
 
 lang, encoding = locale.getlocale()
 if lang[:lang.find('_')] == 'Russian':
-    os.chdir('./help/ru')
+    os.chdir('./help/ru/')
 else:
-    os.chdir('./help/en')
+    os.chdir('./help/en/')
 
 agrm = sys.argv[1:]
 

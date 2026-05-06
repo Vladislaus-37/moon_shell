@@ -1,6 +1,7 @@
 import subprocess
 import os
 import sys
+import platform
 
 maindir = os.getcwd()
 last = maindir
@@ -8,17 +9,23 @@ agrm = sys.argv[1:]
 alias_name = []
 alias_commands = []
 
+def get_homedir():
+    if platform.platform()[1] == 'Windows':
+        return os.environ.get('USERPROFILE')
+    else:
+        return os.environ.get('HOME')
+
 def add_alias(name, command):
     global alias_name, alias_commands
-    alias_name += [name] 
+    alias_name += [name]
     alias_commands += [command]
     return 0
 
 def cmdanal(comm):
     global last
-    comm = comm.split(' ')
+    comm = comm.replace('@pwd@', os.getcwd()).replace('@..@', os.getcwd()[:os.getcwd().rfind('/')+1]).replace('@home@', get_homedir()).split(' ')
     cudir = os.getcwd()
-    os.chdir(maindir + '/run/')
+    comm_dir = maindir + '/run/'
 
     # Check Aliases
     if comm[0] in alias_name:
@@ -28,7 +35,7 @@ def cmdanal(comm):
 
      # Built is`s
     elif comm[0] == 'ls':
-        subprocess.run(['python'] + [comm[0] + '.py'] + [cudir],shell=False)
+        subprocess.run(['python'] + [comm_dir + comm[0] + '.py'] + [cudir],shell=False)
         os.chdir(cudir)
 
     elif comm[0] == 'alias':
@@ -50,7 +57,7 @@ def cmdanal(comm):
         os.chdir(cudir)
 
     elif comm[0] == 'sudo':
-        subprocess.run(['sudo']+['python'] + [comm[0] + '.py'] + [cudir] + comm[1:], shell=False)
+        subprocess.run(['sudo']+['python'] + [comm_dir + comm[0] + '.py'] + [cudir] + comm[1:], shell=False)
         os.chdir(cudir)
 
     elif comm[0] == 'echo':
@@ -59,7 +66,7 @@ def cmdanal(comm):
 
     # In delevery
     elif (comm[0] + '.py') in os.listdir(maindir + '/run/'):
-        subprocess.run('python ' + comm[0] + '.py ' + ' '.join(comm[1:]), shell=False)
+        subprocess.run(['python'] + [comm_dir + comm[0] + '.py'] + comm[1:], shell=False)
         os.chdir(cudir)
     
     # Other
