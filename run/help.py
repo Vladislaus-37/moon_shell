@@ -2,11 +2,16 @@ import sys
 import os
 import locale
 
+def get_me():
+    script_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(script_path)
+    return script_dir
+
 lang, encoding = locale.getlocale()
 if lang[:lang.find('_')] == 'Russian':
-    os.chdir('./help/ru/')
+    os.chdir(f'{get_me()}/help/ru/')
 else:
-    os.chdir('./help/en/')
+    os.chdir(f'{get_me()}/help/en/')
 
 agrm = sys.argv[1:]
 
