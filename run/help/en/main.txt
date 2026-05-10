@@ -18,6 +18,7 @@ Built in Commands with syntax:
     sudo [com]              - run command as superuser
     echo [text]             - print text on screeen
     alias [name] [com(s)]   - create alias for command(s)
+    mark [opt] [name] [val] - * work with markers
     
-More detial help reference about commands you can find  here:
+More detial help reference about * commands you can find here:
     help [commmand]

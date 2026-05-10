@@ -8,6 +8,8 @@ last = maindir
 agrm = sys.argv[1:]
 alias_name = []
 alias_commands = []
+mark_name = ['@pwd@', '@..@', '@home@']
+mark_comms = ['os.getcwd()', 'os.getcwd()[:os.getcwd().rfind("/")+1]', 'get_homedir()']
 
 def get_homedir():
     if platform.platform()[1] == 'Windows':
@@ -21,9 +23,25 @@ def add_alias(name, command):
     alias_commands += [command]
     return 0
 
+def add_mark(name, value):
+    global mark_name, mark_comms
+    mark_name.append(f'@{name}@')
+    mark_comms.append(str(value))
+    return 0
+
+def edit_mark(name, value):
+    global mark_comms
+    mark_comms[mark_name.index(f'@{name}@')] = str(value)
+    return 0
+
+def mark_anal(command):
+    for i in mark_name:
+        command = command.replace(i, str(eval(mark_comms[mark_name.index(i)])))
+    return command
+
 def cmdanal(comm):
     global last
-    comm = comm.replace('@pwd@', os.getcwd()).replace('@..@', os.getcwd()[:os.getcwd().rfind('/')+1]).replace('@home@', get_homedir()).split(' ')
+    comm = mark_anal(comm).split(' ')
     cudir = os.getcwd()
     comm_dir = maindir + '/run/'
 
@@ -36,29 +54,52 @@ def cmdanal(comm):
      # Built is`s
     elif comm[0] == 'ls':
         subprocess.run(['python'] + [comm_dir + comm[0] + '.py'] + [cudir],shell=False)
-        os.chdir(cudir)
+
+    elif comm[0] == 'mark':
+        try:
+            if comm[1] == 'add':
+                add_mark(comm[2], ' '.join(comm[3:]))
+            elif comm[1] == 'edit':
+                edit_mark(comm[2], ' '.join(comm[3:]))
+            elif comm[1] == 'list':
+                for i in mark_name:
+                    cm = mark_comms[mark_name.index(i)]
+                    print(f'{i} : {cm}')
+
+        except Exception as err:
+            print([False, err])
+
+    elif comm[0] == 'export':
+        try:
+            edit_mark(comm[1], ' '.join(comm[2:]))
+        except Exception as err:
+            print([False, err])
 
     elif comm[0] == 'alias':
-        add_alias(comm[1], ' '.join(comm[2:]))
+        try:
+            add_alias(comm[1], ' '.join(comm[2:]))
+        except Exception as err:
+            print([False, err])
 
     elif comm[0] == 'cd':
-        if comm[1] == '-':
-            os.chdir(last)
-            last = cudir
-        else:
-            os.chdir(' '.join(comm[1:]))
-            last = cudir
+        try:
+            if comm[1] == '-':
+                os.chdir(last)
+                last = cudir
+            else:
+                os.chdir(' '.join(comm[1:]))
+                last = cudir
+        except Exception as err:
+            print([False, err])
 
     elif comm[0] == 'exit':
         sys.exit()
 
     elif comm[0] == 'pwd':
         print(cudir)
-        os.chdir(cudir)
 
     elif comm[0] == 'sudo':
         subprocess.run(['sudo']+['python'] + [comm_dir + comm[0] + '.py'] + [cudir] + comm[1:], shell=False)
-        os.chdir(cudir)
 
     elif comm[0] == 'echo':
         print(' '.join(comm[1:]))
@@ -68,7 +109,7 @@ def cmdanal(comm):
     elif (comm[0] + '.py') in os.listdir(maindir + '/run/'):
         subprocess.run(['python'] + [comm_dir + comm[0] + '.py'] + comm[1:], shell=False)
         os.chdir(cudir)
-    
+
     # Other
     elif comm[0] != 'help':
         try:
@@ -76,7 +117,6 @@ def cmdanal(comm):
             os.chdir(cudir)
         except Exception as err:
             print([False, err])
-        os.chdir(cudir)
     return 0
 
 if agrm:

@@ -1,0 +1,11 @@
+mark [option] [name] [value]
+----------------------------------------
+
+[option] - option:
+ - add  - [name] [value] - create marker
+ - edit - [name] [value] - edit marker (system too)
+ - list -                - list all markers and they eval code
+
+[name] - name (str)
+
+[value] - python evaluate code as dinamyc value
