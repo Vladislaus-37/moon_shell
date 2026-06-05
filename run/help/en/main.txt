@@ -15,7 +15,7 @@ Built in Commands with syntax:
     mv [scr] [mv-to]        - rename file or folder
     clear                   - claer output
     print [text] [path_p]   - print text on printer
-    sudo [com]              - run command as superuser
+    root                    - restart shell as superuser (unsatble)
     echo [text]             - print text on screeen
     alias [name] [com(s)]   - create alias for command(s)
     mark [opt] [name] [val] - * work with markers
