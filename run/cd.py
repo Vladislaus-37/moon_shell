@@ -27,14 +27,7 @@ try:
         # Домашняя директория — расширяем ~
         target = os.path.expanduser(target)
     else:
-        # Относительный путь — сначала пробуем как абсолютный относительно корня
-        root_relative = os.path.join("/", target)
-        if os.path.isdir(root_relative):
-            target = root_relative
-        else:
-            # Если не существует, пробуем как поддиректорию домашней папки
-            home_dir = os.path.expanduser("~")
-            target = os.path.join(home_dir, target)
+        target = os.path.join(other[0], target)  # относительный путь от текущего каталога
 
     # Преобразуем в абсолютный путь
     target = os.path.abspath(target)

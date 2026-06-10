@@ -19,6 +19,9 @@ Built in Commands with syntax:
     echo [text]             - print text on screeen
     alias [name] [com(s)]   - create alias for command(s)
     mark [opt] [name] [val] - * work with markers
+    calc [expr]             - evaluate python3 expression
+    cat [path]              - show utf-8 file content
+    cat16 [path]            - show utf-16 file content
     
 More detial help reference about * commands you can find here:
     help [commmand]
