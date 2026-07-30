@@ -1,0 +1,5 @@
+mark add pwd os.getcwd()
+mark add .. os.getcwd()[:os.getcwd().rfind("/")+1] 
+mark add home get_homedir()
+mark add ps1 f"\033[1;34m{os.getcwd()}\033[1;32m $ \033[0m"
+echo  Welcome back!
