@@ -12,9 +12,18 @@ mark_name = []
 mark_comms = []
 
 def is_admin() -> bool:
+    is_wine = False
+    try:
+        import ctypes
+        if hasattr(ctypes.cdll.ntdll, 'wine_get_version'):
+            is_wine = True
+    except (AttributeError, OSError):
+        pass
     try:
         return os.getuid() == 0
     except AttributeError:
+        if is_wine:
+            return False
         import ctypes
         try:
             return ctypes.windll.shell32.IsUserAnAdmin() != 0
@@ -22,7 +31,19 @@ def is_admin() -> bool:
             return False
 
 def get_homedir():
-    if platform.platform()[1] == 'Windows':
+    is_wine = 'WINEHOMEDIR' in os.environ
+    if is_wine:
+        try:
+            script_path = get_me() 
+            if script_path and len(script_path) > 2 and script_path[1] == ':':
+                drive_letter = script_path[0]
+                return f"{drive_letter}:\\home\\vladislaus"
+        except Exception:
+            pass
+        wine_home = os.environ.get('WINEHOMEDIR')
+        if wine_home:
+            return wine_home
+    if platform.system() == 'Windows':
         return os.environ.get('USERPROFILE')
     else:
         return os.environ.get('HOME')
@@ -39,17 +60,36 @@ try:
 except Exception as e:
     print([False, e])
 
-if platform.platform()[1] == 'Windows':
-    py_name='python'
-else:
-    py_name='python3'
+def find_python_executable() -> str:
+    if sys.executable and os.path.exists(sys.executable):
+        return sys.executable
+
+    if os.name == 'nt': 
+        exe_name = 'python.exe'
+    else:
+        exe_name = 'python3'
+    system_path = shutil.which(exe_name) or shutil.which('python')
+    if system_path:
+        return system_path
+
+    if os.name == 'nt':
+        appdata_python = os.path.expandvars(r"%USERPROFILE%\AppData\Local\Programs\Python\Python313\python.exe")
+        if os.path.exists(appdata_python):
+            return appdata_python
+        if os.path.exists(r"C:\Python313\python.exe"):
+            return r"C:\Python313\python.exe"
+
+    return 'python'
+
+py_name = find_python_executable()
+print(f"[DEBUG] Имя интерпретатора определено как: {py_name}")
 
 def msh_file(path):
     try:
         with open(path, 'r', encoding='utf-8') as f:
             for line in f:
                 for part in line.split(" && "):
-                    cmdanal(part.strip())
+                    cmd(part.strip())
     except Exception as e:
         print([False, e])
 
@@ -61,6 +101,11 @@ def add_alias(name, command):
 
 def add_mark(name, value):
     global mark_name, mark_comms
+    try:
+        eval(value)
+    except Exception as e:
+        print([False, e, "REMINDER: Required python3 expression"])
+        return 1
     mark_name.append(f'@{name}@')
     mark_comms.append(str(value))
     return 0
@@ -75,7 +120,7 @@ def mark_anal(command):
         command = command.replace(i, str(eval(mark_comms[mark_name.index(i)])))
     return command
 
-def cmdanal(comm):
+def cmd(comm):
     global last
     data_path = f"{get_me()}/current_user_data.txt"
     try:
@@ -150,7 +195,7 @@ msh_file(f"{maindir}/.mshrc")
 if agrm:
     for i in agrm:
         for j in i.split(" && "):
-            cmdanal(j)
+            cmd(j)
     sys.exit()
 
 while True:
@@ -160,8 +205,8 @@ while True:
         with open (f"{get_me()}/current_user_data.txt", 'r', encoding="utf-8") as file:
             data = file.readlines()[0].rstrip('\n')
             os.chdir(data)
-        print(mark_anal(str(eval(mark_comms[3]))), end="")
+        print(mark_anal("@ps1@"), end="")
         cow = input().rstrip(' ').strip(' ')
     cow = cow.split(' && ')
     for i in cow:
-        cmdanal(i)
+        cmd(i)
